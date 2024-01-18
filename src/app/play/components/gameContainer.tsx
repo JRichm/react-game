@@ -1,3 +1,5 @@
+import ChunkComponent from "./chunkComponent"
+
 export default function GameContainer() {
     return (
         <div className="w-[600px] h-[600px] text-white flex flex-row justify-center place-items-center">
@@ -8,16 +10,16 @@ export default function GameContainer() {
                 <div className="bg-gray-100 w-[100px] h-[30px] rounded hover:bg-gray-200 hover:cursor-pointer flex justify-center">
                     <img className="w-[20px] h-[20px] self-center " src="https://upload.wikimedia.org/wikipedia/commons/1/10/TriangleArrow-Up.svg"/>
                 </div>
-                <div className="grid grid-cols-3 gap-2 p-2">
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
-                    <div className="bg-red-300 w-[165px] aspect-square"></div>
+                <div className="grid grid-cols-3 p-3">
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
+                    <ChunkComponent chunkSize={10} />
                 </div>
                 <div className="bg-gray-100 w-[100px] h-[30px] rounded hover:bg-gray-200 hover:cursor-pointer flex justify-center">
                     <img className="w-[20px] h-[20px] self-center " src="https://upload.wikimedia.org/wikipedia/commons/4/4f/TriangleArrow-Down.svg"/>
