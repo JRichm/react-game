@@ -20,12 +20,12 @@ class World(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False, unique=True)
-    owner = db.Column(db.Integer(), ForeignKey("Users.id", ondelete="CASCADE"), nullable=False, unique=True)
-    pin = db.Column(db.String(), nullable=False, unique=True)
+    owner = db.Column(db.Integer(), ForeignKey("Users.id", ondelete="CASCADE"))
+    pin = db.Column(db.String(), unique=True)
     created = db.Column(db.Date(), nullable=False)
-    updated = db.Column(db.Date(), nullable=False)
-    last_played = db.Column(db.Date(), nullable=False)
-    world_data = db.Column(db.JSON(), nullable=False)
+    updated = db.Column(db.Date())
+    last_played = db.Column(db.Date())
+    world_data = db.Column(db.JSON())
 
 
 def connect_to_db(app):
