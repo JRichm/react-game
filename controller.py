@@ -28,7 +28,6 @@ def create_world(worldName):
     )
 
     print('created new world object')
-    print(world)
 
 
     # generate empty chunks
@@ -50,9 +49,9 @@ def create_world(worldName):
     # set world_data
     world.world_data = new_world_data
 
-    print('world before commit')
-    print(world)
-    
+    print('world chunks')    
+    print(world.world_data)
+
     # add world to database
     db.session.add(world)
     db.session.commit()
@@ -65,11 +64,8 @@ def create_world(worldName):
 
 def get_world_by_name(world_name):
     world = World.query.filter_by(name=world_name).first()
-    print('worldddd')
-    print(world)
     if world:
         print('world found')
-        print(world)
         return serialize_world(world)
     
     else:
@@ -86,7 +82,6 @@ def get_all_worlds():
     print(worlds)
     if worlds:
         print('worlds found')
-        print(worlds)
         return worlds
     
     else:
@@ -97,6 +92,8 @@ def get_all_worlds():
         }
 
 def serialize_world(world):
+    print('serializing wolrd')
+    print(world)
     return {
         "id": world.id,
         "name": world.name,

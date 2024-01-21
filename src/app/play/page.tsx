@@ -104,7 +104,17 @@ export default function PlayPage() {
                     {
                         menu == "worlds" &&
                         <div className='flex flex-col text-center'>
-                            <p>{JSON.stringify(worlds)}</p>
+                            <div>
+                                {
+                                    worlds.map((world: any) => (
+                                        <a href={`/play/${world.name}`} className='flex flex-row gap-2 w-[400px] bg-gray-100 m-2 p-1 rounded hover:bg-gray-200 hover:cursor-pointer'>
+                                            <p>{ world["id"] }</p>
+                                            <p>{ world.name }</p>
+                                            <p className='text-right w-full'>{ (new Date(world.created).toLocaleString()).toString() }</p>
+                                        </a>
+                                    ))
+                                }
+                            </div>
                             <p className={`${menuButtonStyle}`} onClick={e=> setMenu("main")}>back</p>
                         </div>
                     }

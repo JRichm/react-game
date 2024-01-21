@@ -3,29 +3,44 @@ from flask_sock import Sock
 from flask_socketio import SocketIO
 from flask_cors import CORS
 import socketio
+import json
+from datetime import date
 
 from controller import create_world, get_world_by_name, dbConnectionHandler, get_all_worlds
+
 
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()
+
 
 app = Flask(__name__)
 CORS(app)
 sock = Sock(app)
 
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, date):
+            return obj.isoformat()
+        return super().default(obj)
+    
+
 @sock.route('/worldSocket/<worldName>')
 def worldSocket(ws, worldName):
     world = get_world_by_name(worldName)
     if world:
+        print("ws:worldd")
         print(world)
-        ws.send(world.world_data)
+        # json_object = json.dumps(world, indent=4, cls=CustomJSONEncoder)
+        # print(json_object)
     else:
         print('world not found')
         return redirect("/play/worldnotfound", code=204)
         
-
+        
 @app.route('/get_world/<worldName>', methods=['GET'])
 def get_world(worldName):
     world = get_world_by_name(worldName)
@@ -72,8 +87,8 @@ def worlds():
                 "name": world.name,
                 "owner": world.owner,
                 "pin": world.pin,
-                "created_at": world.created_at,
-                "updated_at": world.updated_at,
+                "created": world.created,
+                "updated": world.updated,
                 "last_played": world.last_played,
                 "world_data": world.world_data
             }
