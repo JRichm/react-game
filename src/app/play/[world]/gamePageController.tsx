@@ -2,6 +2,37 @@
 "use client"
 import { useRouter } from 'next/navigation'
 
+export interface worldType {
+    id: number;
+    name: string;
+    owner: number;
+    pin: string;
+    created: string;
+    updated: Date;
+    last_played: Date;
+    world_data: worldDataType;
+}
+
+interface worldDataType {
+    [key: string]: chunkRowType;
+}
+
+interface chunkRowType {
+    [key: string]: chunkType;
+}
+
+interface chunkType {
+    id: number;
+    location: string;
+    tiles: tileType[]
+} 
+
+interface tileType {
+    id:number;
+    location: string;
+    color: string;
+    opacity: number;
+}
 
 export async function findWorld(worldName: string) {
     // Check if the world exists in the database
@@ -13,6 +44,47 @@ export async function findWorld(worldName: string) {
 
     return world
 }
+
+export async function changeTileColor(world: worldType, x: number, y: number, color: string) {
+    // Find the chunk and tile
+    const chunkIndex = Math.floor(x / 10);
+
+    // Check if 'chunks' property exists in world.world_data
+    if ('chunks' in world.world_data) {
+        // Check if the chunk exists
+        if (world.world_data.chunks[chunkIndex]) {
+            // Check if 'tiles' property exists in the chunk
+            if ('tiles' in world.world_data.chunks[chunkIndex]) {
+                const tile = world.world_data.chunks[chunkIndex].tiles[y % 10];
+                
+                // Check if 'color' property exists in the tile
+                if (tile && 'color' in tile) {
+                    // Update the tile color
+                    tile.color = color;
+
+                    // TODO: Send the updated world data back to the server if needed
+                    // You may want to add logic to update the server with the modified data
+
+                    // Return the updated world data
+                    return world;
+                } else {
+                    console.error(`'color' property not found in tile at (${x}, ${y})`);
+                    return null;
+                }
+            } else {
+                console.error(`'tiles' property not found in chunk at (${x}, ${y})`);
+                return null;
+            }
+        } else {
+            console.error(`Chunk not found at (${x}, ${y})`);
+            return null;
+        }
+    } else {
+        console.error('Invalid world_data structure');
+        return null;
+    }
+}
+
 
 export function connectWorldSocket(worldName: string) {
     const socket = new WebSocket(`ws://localhost:5000/worldSocket/${worldName}`);

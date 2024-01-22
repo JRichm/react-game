@@ -32,10 +32,17 @@ def create_world(worldName):
 
     # generate empty chunks
     chunks = [
-        {"tileData": [
-            "200,200,200,1"] * 100  # 100 blocks (10x10)
-        } for _ in range(100)       # 100 chunks (10x10)
+        {"tileData": ["200,200,200,1"] * 10} for _ in range(100)
     ]
+
+    # Create a 2D structure for chunks
+    chunk_rows = {}
+    for i in range(10):
+        chunk_row_key = f"chunk_row_{str(i).zfill(2)}"
+        chunk_rows[chunk_row_key] = {}
+        for j in range(10):
+            chunk_key = f"chunk_{str(j).zfill(2)}"
+            chunk_rows[chunk_row_key][chunk_key] = chunks[i * 10 + j]
 
     # create world_data json and set world data to empty chunks
     new_world_data = {
@@ -43,7 +50,7 @@ def create_world(worldName):
         "worldName": worldName,
         "worldOwner": "notset",
         "worldCreated": str(datetime.datetime.now()),
-        "chunks": chunks
+        "chunks": chunk_rows
     }
 
     # set world_data
