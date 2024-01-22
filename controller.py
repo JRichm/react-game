@@ -33,7 +33,7 @@ def create_world(worldName):
     # generate empty chunks
     chunks = [
         {"tileData": [
-            "222,222,222,1"] * 100  # 100 blocks (10x10)
+            "200,200,200,1"] * 100  # 100 blocks (10x10)
         } for _ in range(100)       # 100 chunks (10x10)
     ]
 
