@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     "gameapp",
-    'Gameapp.apps.GameappConfig'
 ]
 
 # CORS_ORIGIN_ALLOW_ALL = True not reccomended for production
