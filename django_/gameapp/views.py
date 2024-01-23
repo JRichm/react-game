@@ -1,16 +1,84 @@
 from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+from secrets import token_hex
+
 
 from gameapp.models import Worlds, Users
 from gameapp.serializers import WorldSerializer, UserSerializer
 
 
-
 # Create your views here.
 def home(request): 
     return HttpResponse("Hello world!")
+
+
+@csrf_exempt
+def world(request, world_name=None):
+
+    # GET world data
+    if request.method == 'GET':
+        try:
+            # if world_name is used
+            if world_name is not None:
+                world = Worlds.objects.get(world_name=world_name)
+                serialized_world = WorldSerializer(world)
+
+            # otherwise return all worlds
+            else:
+                worlds = Worlds.objects.all()
+                serialized_world = WorldSerializer(worlds, many=True)
+
+            # return serialized data
+            return JsonResponse(serialized_world.data, safe=False)
+        
+        # if world is not found
+        except ObjectDoesNotExist:
+
+            # return 404
+            return JsonResponse({"error": "World not found"}, status=404)
+        
+    # NEW world data
+    elif request.method == 'POST':
+
+        # check if new world_name has been input
+        if world_name is not None:
+
+            # check if input name is already in use
+            world_query = Worlds.objects.filter(world_name=world_name)
+            if world_query.exists():
+                return JsonResponse({"error": "World name already in use"}, status=409)
+            
+            else:
+                new_name = world_name
+
+        # otherwise genereate new name string
+        else:
+            # generate new name string
+            new_name = token_hex(3)
+            
+            # check if newly generated name matches a name in the database
+            while Worlds.objects.filter(world_name=new_name).exists():
+                new_name = token_hex(3)
+
+
+        # create new world in database with the generated name
+        # Assuming you have a serializer and saving logic here
+        new_world = Worlds(world_name=new_name)
+        new_world.save()
+
+        return JsonResponse({"message": "World created successfully", "world_name": new_name}, status=201)
+
+    # UPDATE world data
+    elif request.method == 'PUT':
+        pass
+
+    # DELETE world data
+    elif request.method == 'DELETE':
+        pass
+
 
 @csrf_exempt
 def worldApi(request, id=0):
