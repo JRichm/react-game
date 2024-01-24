@@ -14,11 +14,15 @@ from gameapp.serializers import WorldSerializer, UserSerializer
 def home(request): 
     return HttpResponse("Hello world!")
 
+# ▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄  ▄▄▄▄▄▄   
+# ██▄▄▄██  ██▄▄▄██    ██     
+# ██   ██  ██       ▄▄██▄▄  
 
-@csrf_exempt
+@csrf_exempt    
 def world(request, world_name=None):
-
-    # GET world data
+#       #       #       #       #       #       #       #       #       #       #
+#   GET world data
+#
     if request.method == 'GET':
         try:
             # if world_name is used
@@ -40,8 +44,13 @@ def world(request, world_name=None):
             # return 404
             return JsonResponse({"error": "World not found"}, status=404)
         
-    # NEW world data
+
+#       #       #       #       #       #       #       #       #       #       
+#   CREATE world data
+#
     elif request.method == 'POST':
+
+        # TODO update function to handle case if world name appears in request body
 
         # check if new world_name has been input
         if world_name is not None:
@@ -54,9 +63,8 @@ def world(request, world_name=None):
             else:
                 new_name = world_name
 
-        # otherwise genereate new name string
+        # otherwise generate new name string
         else:
-            # generate new name string
             new_name = token_hex(3)
             
             # check if newly generated name matches a name in the database
@@ -64,21 +72,71 @@ def world(request, world_name=None):
                 new_name = token_hex(3)
 
 
-        # create new world in database with the generated name
-        # Assuming you have a serializer and saving logic here
+        # save new world in database
         new_world = Worlds(world_name=new_name)
         new_world.save()
 
-        return JsonResponse({"message": "World created successfully", "world_name": new_name}, status=201)
+        return JsonResponse({"message": "World created successfully!", "world_name": new_name}, status=201)
+        
 
-    # UPDATE world data
+#       #       #       #       #       #       #       #       #       #    
+#   UPDATE world data
+#
     elif request.method == 'PUT':
-        pass
 
-    # DELETE world data
+        # get data from request body
+        world_data = JSONParser().parse(request)
+
+        # try to get world from world name
+        if world_name is not None:
+            world = Worlds.objects.get(world_name=world_name)
+
+            # if world name from endpoint don't match world id from params
+            if world.world_name != world_name:
+                return JsonResponse({"error": "world_name does not match world_id"}, status=404)
+        
+        # use world id from world_data
+        elif 'world_id' in world_data:
+            world = Worlds.objects.get(world_id=world_data['world_id'])
+
+        # return if world is not found
+        else:
+            return JsonResponse({"error": "World not found."}, status=404)
+
+        # serialize and save world with new data
+        worlds_serializer = WorldSerializer(world, data=world_data)
+        if worlds_serializer.is_valid():
+            worlds_serializer.save()
+            return JsonResponse("Update Successfully!", safe=False, status=200)
+        
+        # return if serialization is not valid
+        return JsonResponse({"error": "Failed to Update."}, status=406)
+        
+
+#       #       #       #       #       #       #       #       #       #     
+#   DELETE world data
+#
     elif request.method == 'DELETE':
-        pass
 
+        world_data = JSONParser().parse(request)
+
+        # try to get world from world name
+        if world_name is not None:
+            world = Worlds.objects.get(world_name=world_name)
+
+        elif 'world_name' in world_data:
+            world = Worlds.objects.get(world_name=world_data['world_name'])
+
+        elif 'world_id' in world_data:
+            world = Worlds.objects.get(world_name=world_data['world_id'])
+
+        else: 
+            return JsonResponse({"error": "World not found."}, status=404)
+        
+        world.delete()
+        return JsonResponse("World deleted successfully!", safe=False, status=200)
+        
+    #       #       #       #       #       #       #       #       #       #     
 
 @csrf_exempt
 def worldApi(request, id=0):

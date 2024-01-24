@@ -24,7 +24,7 @@ interface chunkRowType {
 interface chunkType {
     id: number;
     location: string;
-    tiles: tileType[]
+    tileData: tileType[]
 } 
 
 interface tileType {
@@ -47,24 +47,29 @@ export async function findWorld(worldName: string) {
 
 export async function changeTileColor(world: worldType, x: number, y: number, color: string) {
     // Find the chunk and tile
-    const chunkIndex = Math.floor(x / 10);
+    const rowIndex = Math.floor(y / 10);
+    const chunkIndexWithinRow = Math.floor(x / 10);
+    const chunkIndex = rowIndex * 10 + chunkIndexWithinRow;
 
     // Check if 'chunks' property exists in world.world_data
     if ('chunks' in world.world_data) {
         // Check if the chunk exists
         if (world.world_data.chunks[chunkIndex]) {
             // Check if 'tiles' property exists in the chunk
-            if ('tiles' in world.world_data.chunks[chunkIndex]) {
-                const tile = world.world_data.chunks[chunkIndex].tiles[y % 10];
+            if ('tileData' in world.world_data.chunks[chunkIndex]) {
+                const tileRow = world.world_data.chunks[chunkIndex].tileData;
+                const tile = tileRow && tileRow[y % 10];
                 
+                console.log(color)
+
                 // Check if 'color' property exists in the tile
-                if (tile && 'color' in tile) {
+                if (tile) {
                     // Update the tile color
                     tile.color = color;
-
+            
                     // TODO: Send the updated world data back to the server if needed
                     // You may want to add logic to update the server with the modified data
-
+            
                     // Return the updated world data
                     return world;
                 } else {
@@ -72,7 +77,7 @@ export async function changeTileColor(world: worldType, x: number, y: number, co
                     return null;
                 }
             } else {
-                console.error(`'tiles' property not found in chunk at (${x}, ${y})`);
+                console.error(`'tiles' property not found in chunk at (${x}, ${y}) ${chunkIndex}`);
                 return null;
             }
         } else {
