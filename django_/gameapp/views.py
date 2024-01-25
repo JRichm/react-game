@@ -14,9 +14,6 @@ from gameapp.serializers import WorldSerializer, UserSerializer
 def home(request): 
     return HttpResponse("Hello world!")
 
-# ▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄  ▄▄▄▄▄▄   
-# ██▄▄▄██  ██▄▄▄██    ██     
-# ██   ██  ██       ▄▄██▄▄  
 
 @csrf_exempt    
 def world(request, world_name=None):
