@@ -1,7 +1,7 @@
 export async function createNewWorld() {
     
     const randomHex = Math.floor(Math.random() * 16777215).toString(16); // 16777215 is FFFFFF in hexadecimal
-    let newName = ''
+    let newName = "";
 
     // check if world name exists
     while (newName == '') {
