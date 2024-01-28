@@ -42,7 +42,7 @@ def world(request, world_name=None):
             return JsonResponse({"error": "World not found"}, status=404)
         
 
-#       #       #       #       #       #       #       #       #       #       
+#       #       #       #       #       #       #       #       #       #       #
 #   CREATE world data
 #
     elif request.method == 'POST':
