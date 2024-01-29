@@ -9,7 +9,6 @@ from secrets import token_hex
 from gameapp.models import Worlds, Users
 from gameapp.serializers import WorldSerializer, UserSerializer
 
-
 # Create your views here.
 def home(request): 
     return HttpResponse("Hello world!")
@@ -134,6 +133,38 @@ def world(request, world_name=None):
         return JsonResponse("World deleted successfully!", safe=False, status=200)
         
     #       #       #       #       #       #       #       #       #       #     
+
+
+@csrf_exempt    
+def check_pin(request):
+#       #       #       #       #       #       #       #       #       #       #
+#   check world pin for access
+#
+    if request.method == 'GET':
+        try:
+            # get world_name and input_pin from query parameters
+            world_name = request.GET.get('world_name')
+            input_pin = request.GET.get('input_pin')
+
+            print(world_name)
+            print(input_pin)
+
+            # check if the world exists
+            world = Worlds.objects.get(world_name=world_name)
+
+            if world.pin == input_pin:
+                print(world.pin, " is equal to ", input_pin)
+                is_pin_valid = True
+            else:
+                print(world.pin, " is not equal to ", input_pin)
+                is_pin_valid = False
+
+            return JsonResponse({"pinValid": is_pin_valid})
+        except Worlds.DoesNotExist:
+            return JsonResponse({"error": "World not found"}, status=404)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=400)
+
 
 @csrf_exempt
 def worldApi(request, id=0):

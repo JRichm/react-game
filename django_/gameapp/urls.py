@@ -9,4 +9,6 @@ urlpatterns = [
     
     path("user", views.userApi, name="user_api"),
     path("user/<int:parameter>", views.userApi, name="user_api"),
+    
+    path("check_pin/", views.check_pin, name='check_pin'), 
 ]
