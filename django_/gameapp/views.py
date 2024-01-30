@@ -151,8 +151,11 @@ def check_pin(request):
 
             # check if the world exists
             world = Worlds.objects.get(world_name=world_name)
-
-            if world.pin == input_pin:
+            
+            if not input_pin and not world.pin:
+                print("world does not have pin")
+                is_pin_valid = True
+            elif world.pin == input_pin:
                 print(world.pin, " is equal to ", input_pin)
                 is_pin_valid = True
             else:
