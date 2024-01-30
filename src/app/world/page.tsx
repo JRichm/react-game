@@ -80,6 +80,7 @@ export default function WorldPage() {
                                                         { world.owner ? <p key={world.world_id + "_" + world.owner}>{world.owner}</p> : <p>No Owner</p> }
                                                         { world.last_played ? <p key={world.world_id + "_" + world.last_played}>{JSON.stringify(world.last_played)}</p> : <p>Unknown last play date</p> }
                                                         { world.created ? <p key={world.world_id + "_" + world.created}>{JSON.stringify(world.created)}</p> : <p>Unknown creation date</p> }
+                                                        { world.pin ? <p key={world.world_id + "_" + world.pin}>Pin: {world.pin}</p> : <p>No Pin</p> }
                                                     </div>
                                                 </div>
                                             </div>

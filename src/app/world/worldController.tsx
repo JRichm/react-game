@@ -44,9 +44,15 @@ export async function GetWorld(worldName:string) {
     }
 }
 
-export async function CheckPin(world: string, pin: string) {
+export async function CheckPin(world: string, pin?: string) {
     try {
-        const queryString = `?world_name=${encodeURIComponent(world)}&input_pin=${encodeURIComponent(pin)}`;
+        let queryString;
+        if (pin) {
+            queryString = `?world_name=${encodeURIComponent(world)}&input_pin=${encodeURIComponent(pin)}`;
+        } else {
+            queryString = `?world_name=${encodeURIComponent(world)}`;
+        }
+        
         const response = await fetch(`http://127.0.0.1:8000/check_pin${queryString}`, {
             method: "GET",
             mode: "cors",
@@ -58,17 +64,16 @@ export async function CheckPin(world: string, pin: string) {
         if (response.ok) {
             // Handle successful response, e.g., parse JSON
             const data = await response.json();
-            console.log('is pin valid?:', data.pinValid);
-            return data.pinValid;
+            return data;
         } else {
             // Handle error response
             console.error('Error:', response.statusText);
-            return false;
+            return ({"pinValid": false});
         }
     } catch (error) {
         // Handle network or other errors
         console.error('Error:', error);
-        return false;
+        return ({"pinValid": false});
     }
 }
 

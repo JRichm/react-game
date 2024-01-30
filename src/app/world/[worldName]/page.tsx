@@ -15,6 +15,14 @@ export default function WorldPage({params, searchParams}: { params: {worldName: 
   const [inputdata, setInputdata] = useState("");
 
   useEffect(() => {
+    if (!pinEntered && inputdata == "") {
+      const checkEmptyWorldPin = async () => {
+        const worldHasPin = await CheckPin(params.worldName)
+        console.log("worldHasPin: ", worldHasPin)
+      }
+      checkEmptyWorldPin();
+    }
+
     if (pinEntered) {
       const asyncGameData = async () => {
         const worldName = params.worldName;
@@ -32,19 +40,10 @@ export default function WorldPage({params, searchParams}: { params: {worldName: 
     const formData = new FormData(form);
 
     const pinInput = formData.get('pin-input') || ""; // Provide a default value
-
-
-    console.log("checking ", params.worldName, " with pin ", pinInput)
     const isPinValid = await CheckPin(params.worldName, pinInput as string);
 
-    setPin(isPinValid);
-
-    isPinValid ? setInputdata("true") : setInputdata("false")
-    
-
-    console.log(pinInput);
+    setPin(isPinValid["pinValid"]);
   }
-
 
   return (
     <div className='min-h-screen'>
@@ -54,11 +53,11 @@ export default function WorldPage({params, searchParams}: { params: {worldName: 
           <form className='flex flex-col bg-gray-100 w-[300px] p-2 h-fit mt-36' onSubmit={e => checkPin(e)}>
             <label htmlFor='pin-input' className='p-1 underline'>enter pin to join</label>
             <input type='text' name='pin-input' placeholder="'1234'" className='p-1'></input>
-            <input type='submit' value="join" className='bg-green-400 text-white w-fit px-6 mt-2 self-end'></input>
+            <span className='flex justify-end place-items-center'>
+              {inputdata != "" && <p className='text-xs text-red-500 font-medium text-left w-full'>{inputdata}</p>}
+              <input type='submit' value="join" className='bg-green-400 text-white w-fit px-6 mt-2 self-end'></input>
+            </span>
           </form>
-          <div>
-            <p>IData: {inputdata}</p>
-          </div>
         </div>
       }
       {
